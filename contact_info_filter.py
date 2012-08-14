@@ -14,12 +14,12 @@ legacydatareader = csv.DictReader(legacy_access_database,)
 # Next, a new empty file needs to be created. This is where the filtered data will be written to disk.
 
 legacy_access_database_filtered = open("/home/mciocchi/Projects/data_transformation/sandbox/legacy_access_database_filtered.csv", 'w')
-filtereddatawriter = csv.DictWriter(legacy_access_database_filtered, ['ContactID', 'ContactName', 'AddressLine1', 'AddressLine2', 'City', 'StateProv', 'ZIPPostalCode', 'Phone', 'EMail', ], )
+filtereddatawriter = csv.DictWriter(legacy_access_database_filtered, ['ID', 'Name', 'AddressFirstLine', 'AddressSecondLine', 'City', 'State', 'ZIP', 'Phone', 'EMail', ], )
 
 # Discarded data will be written to a third file, to be sorted through by hand later, in case some of it is salvageable:
 
 legacy_access_database_discarded_data = open("/home/mciocchi/Projects/data_transformation/sandbox/legacy_access_database_discarded_data.csv", 'w')
-discardeddatawriter = csv.DictWriter(legacy_access_database_discarded_data, ['ContactID', 'ContactName', 'AddressLine1', 'AddressLine2', 'City', 'StateProv', 'ZIPPostalCode', 'Phone', 'EMail', ], )
+discardeddatawriter = csv.DictWriter(legacy_access_database_discarded_data, ['ID', 'Name', 'AddressFirstLine', 'AddressSecondLine', 'City', 'State', 'ZIP', 'Phone', 'EMail', ], )
 
 
 def isgarbage(csvline):
@@ -29,9 +29,9 @@ def isgarbage(csvline):
 
 # Pull data from the dictionary csvline into variables inside this closure for the purpose of readability and simplicity.
 
-    ContactName = csvline.get('ContactName')
-    AddressLine1 = csvline.get('AddressLine1')
-    AddressLine2 = csvline.get('AddressLine2')
+    Name = csvline.get('Name')
+    AddressFirstLine = csvline.get('AddressFirstLine')
+    AddressSecondLine = csvline.get('AddressSecondLine')
     City = csvline.get('City')
     Phone = csvline.get('Phone')
     EMail = csvline.get('EMail')
@@ -62,16 +62,16 @@ def isgarbage(csvline):
 
     def addresslinesunusable():
         """
-        Checks if AddressLine1 and AddressLine2 are usable. Returns True if they are, False otherwise.
+        Checks if AddressFirstLine and AddressSecondLine are usable. Returns True if they are, False otherwise.
         """
         def eitheraddresslinebad():
-            if isbadaddress(AddressLine1) or isbadaddress(AddressLine2):
+            if isbadaddress(AddressFirstLine) or isbadaddress(AddressSecondLine):
                 return True
             else:
                 return False
 
         def bothaddresslinesempty():
-            if isemptystring(AddressLine1) and isemptystring(AddressLine2):
+            if isemptystring(AddressFirstLine) and isemptystring(AddressSecondLine):
                 return True
             else:
                 return False
@@ -94,7 +94,7 @@ def isgarbage(csvline):
 
     if iswithoutcontactinfo():
         discarddata()
-    elif isemptystring(ContactName):
+    elif isemptystring(Name):
         discarddata()
     else:
         filtereddatawriter.writerow(csvline)
